@@ -94,6 +94,7 @@ window.addEventListener("DOMContentLoaded", () => {
         modal.style.display = "block";
         document.body.style.overflow = "hidden";
         clearInterval(modalTimerId);
+        //console.log("This is UPD");
     }
     modalTrigger.forEach(it => {
         it.addEventListener("click", openModal);
@@ -119,7 +120,7 @@ window.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    const modalTimerId = setTimeout(openModal, 5000);
+    const modalTimerId = setTimeout(openModal, 10000);
 
     function showModalByScroll() {
         if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
@@ -191,4 +192,54 @@ window.addEventListener("DOMContentLoaded", () => {
         14,
         ".menu .container"
     ).render();
+
+    //Forms on a server
+    const forms = document.querySelectorAll('form'),
+        msg = {
+            load: "Загрузка",
+            success: "Спасибо, ждите ответа!",
+            fail: "Что-то пошло не так..."
+        }
+
+    forms.forEach(it => postData(it));
+
+    function postData(form) {
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            console.log("Submitted");
+
+            const statusMsg = document.createElement("div");
+            statusMsg.classList.add("status");
+            statusMsg.textContent = msg.load;
+            form.append(statusMsg);
+
+            const request = new XMLHttpRequest();
+            request.open("POST", "server.php");
+            request.setRequestHeader("Content-type", "application/json");
+
+            const formData = new FormData(form);
+            const object = {};
+
+            formData.forEach((obj, i) => {
+                object[i] = obj;
+            });
+
+            const json = JSON.stringify(object);
+
+            request.send(json);
+            request.addEventListener("load", () => {
+                if (request.status == 200) {
+                    console.log(request.response);
+                    statusMsg.textContent = msg.success;
+                    form.reset();
+                    setTimeout(() => {
+                        statusMsg.remove()
+                    }, 2000);
+                } else {
+                    statusMsg.textContent = msg.fail;
+                }
+            })
+
+        })
+    }
 });
