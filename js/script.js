@@ -214,31 +214,39 @@ window.addEventListener("DOMContentLoaded", () => {
             form.append(statusMsg);
             form.insertAdjacentElement("afterend", statusMsg);
 
-            const request = new XMLHttpRequest();
-            request.open("POST", "server.php");
-            request.setRequestHeader("Content-type", "application/json");
-
             const formData = new FormData(form);
-            const object = {};
 
+            const object = {};
             formData.forEach((obj, i) => {
                 object[i] = obj;
             });
 
-            const json = JSON.stringify(object);
+            // const json = JSON.stringify(object);
 
-            request.send(json);
-            request.addEventListener("load", () => {
-                if (request.status == 200) {
-                    console.log(request.response);
-                    showThanksModal(msg.success);
-                    form.reset();
-                    statusMsg.remove();
-                } else {
-                    showThanksModal(msg.fail);
+            fetch('server1.php', {
+                method: "POST",
+                body: JSON.stringify(object),
+                headers: {
+                    "Content-type": "application/json"
                 }
-            })
+            }).then(data => data.text()
+            ).then(data => {
+                console.log(data);
+                showThanksModal(msg.success);
+                statusMsg.remove();
+            }).catch(() => {
+                showThanksModal(msg.fail);
+            }).finally(() => {
+                form.reset();
+            });
 
+            // request.addEventListener("load", () => {
+            //     if (request.status == 200) {
+            //         
+            //     } else {
+            //         
+            //     }
+            // })
         })
     }
 
@@ -263,4 +271,14 @@ window.addEventListener("DOMContentLoaded", () => {
             closeModal();
         }, 4000)
     }
+
+    // fetch('https://jsonplaceholder.typicode.com/posts', {
+    //     method: "POST",
+    //     body: JSON.stringify({ name: "Alex" }),
+    //     // headers: {
+    //     //     "Content-type": "application/json"
+    //     // }
+    // })
+    //     .then(response => response.json())
+    //     .then(json => console.log(json));
 });
