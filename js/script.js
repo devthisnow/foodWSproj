@@ -87,8 +87,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
     //Modal window
     const modalTrigger = document.querySelectorAll("[data-open]"),
-        modal = document.querySelector(".modal"),
-        modalCloseBtn = document.querySelector("[data-close]");
+        modal = document.querySelector(".modal");
 
     function openModal() {
         modal.style.display = "block";
@@ -105,10 +104,8 @@ window.addEventListener("DOMContentLoaded", () => {
         document.body.style.overflow = "";
     }
 
-    modalCloseBtn.addEventListener("click", closeModal);
-
     modal.addEventListener("click", (e) => {
-        if (e.target == modal) {
+        if (e.target == modal || e.target.getAttribute("data-close") == "") {
             closeModal();
         }
     });
@@ -196,7 +193,7 @@ window.addEventListener("DOMContentLoaded", () => {
     //Forms on a server
     const forms = document.querySelectorAll('form'),
         msg = {
-            load: "Загрузка",
+            load: "icons/three-dots_load-anim.svg",
             success: "Спасибо, ждите ответа!",
             fail: "Что-то пошло не так..."
         }
@@ -208,10 +205,14 @@ window.addEventListener("DOMContentLoaded", () => {
             e.preventDefault();
             console.log("Submitted");
 
-            const statusMsg = document.createElement("div");
-            statusMsg.classList.add("status");
-            statusMsg.textContent = msg.load;
+            const statusMsg = document.createElement("img");
+            statusMsg.src = msg.load;
+            statusMsg.style.cssText = `
+                display: block;
+                margin: 20 auto;
+            `;
             form.append(statusMsg);
+            form.insertAdjacentElement("afterend", statusMsg);
 
             const request = new XMLHttpRequest();
             request.open("POST", "server.php");
@@ -230,16 +231,36 @@ window.addEventListener("DOMContentLoaded", () => {
             request.addEventListener("load", () => {
                 if (request.status == 200) {
                     console.log(request.response);
-                    statusMsg.textContent = msg.success;
+                    showThanksModal(msg.success);
                     form.reset();
-                    setTimeout(() => {
-                        statusMsg.remove()
-                    }, 2000);
+                    statusMsg.remove();
                 } else {
-                    statusMsg.textContent = msg.fail;
+                    showThanksModal(msg.fail);
                 }
             })
 
         })
+    }
+
+    function showThanksModal(mess) {
+        const prevModalDialog = document.querySelector('.modal__dialog');
+        prevModalDialog.classList.add('hide');
+        openModal();
+
+        const thanksModal = document.createElement("div");
+        thanksModal.classList.add("modal__dialog");
+        thanksModal.innerHTML = `
+            <div class="modal__content">
+                <div data-close class="modal__close">&times;</div>
+                <div class="modal__title" data-close>${mess}</div>
+            </div>
+        `;
+
+        document.querySelector(".modal").append(thanksModal);
+        setTimeout(() => {
+            thanksModal.remove();
+            prevModalDialog.classList.remove("hide");
+            closeModal();
+        }, 4000)
     }
 });
