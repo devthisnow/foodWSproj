@@ -1,0 +1,22 @@
+{
+  "name": "food-site",
+  "version": "1.0.0",
+  "description": "This is the lesson project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/devthisnow/foodWSproj.git"
+  },
+  "author": "IK devthisnow",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/devthisnow/foodWSproj/issues"
+  },
+  "homepage": "https://github.com/devthisnow/foodWSproj#readme",
+  "devDependencies": {
+    "json-server": "^0.17.4"
+  }
+}
