@@ -163,32 +163,22 @@ window.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    new MenuCard(
-        "img/tabs/vegy.jpg",
-        "vegy",
-        'Меню "Фитнес"',
-        'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
-        8,
-        ".menu .container"
-    ).render();
+    const getResources = async (url) => {
+        const res = await fetch(url);
 
-    new MenuCard(
-        "img/tabs/elite.jpg",
-        "elite",
-        'Меню "“Премиум”"',
-        'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
-        18,
-        ".menu .container"
-    ).render();
+        if (!res.ok) {
+            throw new Error(`Could not fetch ${url}, status ${res.status}.`);
+        }
 
-    new MenuCard(
-        "img/tabs/post.jpg",
-        "post",
-        'Меню "Постное"',
-        'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.',
-        14,
-        ".menu .container"
-    ).render();
+        return await res.json();
+    };
+
+    getResources('http://localhost:3000/menu')
+        .then(data => {
+            data.forEach(({ img, altimg, title, descr, price }) => {
+                new MenuCard(img, altimg, title, descr, price, ".menu .container").render();
+            })
+        }).catch(error => console.log(error));
 
     //Forms on a server
     const forms = document.querySelectorAll('form'),
@@ -198,9 +188,21 @@ window.addEventListener("DOMContentLoaded", () => {
             fail: "Что-то пошло не так..."
         }
 
-    forms.forEach(it => postData(it));
+    forms.forEach(it => bindPostData(it));
 
-    function postData(form) {
+    const postData = async (url, data) => {
+        const res = await fetch(url, {
+            method: "POST",
+            body: data,
+            headers: {
+                "Content-type": "application/json"
+            }
+        });
+
+        return await res.json();
+    };
+
+    function bindPostData(form) {
         form.addEventListener("submit", (e) => {
             e.preventDefault();
             console.log("Submitted");
@@ -216,37 +218,18 @@ window.addEventListener("DOMContentLoaded", () => {
 
             const formData = new FormData(form);
 
-            const object = {};
-            formData.forEach((obj, i) => {
-                object[i] = obj;
-            });
+            const json = JSON.stringify(Object.fromEntries(formData.entries()));
 
-            // const json = JSON.stringify(object);
-
-            fetch('server1.php', {
-                method: "POST",
-                body: JSON.stringify(object),
-                headers: {
-                    "Content-type": "application/json"
-                }
-            }).then(data => data.text()
-            ).then(data => {
-                console.log(data);
-                showThanksModal(msg.success);
-                statusMsg.remove();
-            }).catch(() => {
-                showThanksModal(msg.fail);
-            }).finally(() => {
-                form.reset();
-            });
-
-            // request.addEventListener("load", () => {
-            //     if (request.status == 200) {
-            //         
-            //     } else {
-            //         
-            //     }
-            // })
+            postData('http://localhost:3000/requests', json)
+                .then(data => {
+                    console.log(data);
+                    showThanksModal(msg.success);
+                    statusMsg.remove();
+                }).catch(() => {
+                    showThanksModal(msg.fail);
+                }).finally(() => {
+                    form.reset();
+                });
         })
     }
 
@@ -272,7 +255,7 @@ window.addEventListener("DOMContentLoaded", () => {
         }, 4000)
     }
 
-    fetch('http://localhost:3000/menu')
-        .then(data => data.json())
-        .then(res => console.log(res));
+    // fetch('http://localhost:3000/menu')
+    //     .then(data => data.json())
+    //     .then(res => console.log(res));
 });
