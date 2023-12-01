@@ -348,5 +348,77 @@ window.addEventListener("DOMContentLoaded", () => {
             console.log(typeof (curSlide.textContent));
             dotsArr[i - 1].style.opacity = 1;
         })
-    })
+    });
+
+    //Calc creation
+    const result = document.querySelector(".calculating__result span");
+    let gender = "female", height, weight, age, ratio = 1.375;
+
+    function calcTotal() {
+        if (!gender || !height || !weight || !age || !ratio) {
+            result.textContent = "____";
+            return;
+        }
+        if (gender == "female") {
+            result.textContent = ((447.6 + (9.2 * weight) + (3.1 * height) - (4.3 * age)) * ratio).toFixed(1);
+        } else if (gender == "male") {
+            result.textContent = ((88.36 + (13.4 * weight) + (4.8 * height) - (5.7 * age)) * ratio).toFixed(1);
+        }
+    };
+
+    calcTotal();
+
+    function getStaticInfo(parent, activeClass) {
+        const elems = document.querySelectorAll(`${parent} div`);
+
+        elems.forEach(it => {
+            it.addEventListener('click', (e) => {
+                if (e.target.getAttribute('data-ratio')) {
+                    ratio = +e.target.getAttribute('data-ratio')
+                } else {
+                    gender = e.target.getAttribute('id');
+                }
+
+                // console.log(ratio, gender);
+                elems.forEach(elm => {
+                    elm.classList.remove(activeClass);
+                });
+
+                e.target.classList.add(activeClass);
+                calcTotal();
+            });
+        });
+
+
+
+    }
+
+    getStaticInfo("#gender", "calculating__choose-item_active");
+    getStaticInfo(".calculating__choose_big", "calculating__choose-item_active");
+
+    function getDynamicInfo(selector) {
+        const inp = document.querySelector(selector);
+
+        inp.addEventListener("input", () => {
+            switch (inp.getAttribute('id')) {
+                case "height":
+                    height = +inp.value;
+                    break;
+                case "weight":
+                    weight = +inp.value;
+                    break;
+                case "age":
+                    age = +inp.value;
+                    break;
+            }
+            // console.log(inp, height, weight, age);
+            calcTotal();
+        });
+
+    };
+
+    getDynamicInfo("#height");
+    getDynamicInfo("#weight");
+    getDynamicInfo("#age");
+
 });
