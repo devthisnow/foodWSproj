@@ -255,7 +255,40 @@ window.addEventListener("DOMContentLoaded", () => {
         }, 4000)
     }
 
-    // fetch('http://localhost:3000/menu')
-    //     .then(data => data.json())
-    //     .then(res => console.log(res));
+    // Slider design and control
+    const slidesTotal = document.querySelectorAll(".offer__slide").length,
+        curSlide = document.querySelector("#current"),
+        totSlides = document.querySelector("#total"),
+        visibleSlides = document.querySelectorAll(".offer__slide"),
+        prevArrow = document.querySelector(".offer__slider-prev"),
+        nextArrow = document.querySelector(".offer__slider-next");
+    let i = 1;
+
+    totSlides.textContent = slidesTotal.toLocaleString(undefined, { minimumIntegerDigits: 2 });
+    curSlide.textContent = i.toLocaleString(undefined, { minimumIntegerDigits: 2 });
+
+    visibleSlides.forEach(it => it.classList.add("hide"));
+    visibleSlides[i - 1].classList.remove("hide");
+
+    prevArrow.addEventListener("click", (e) => {
+        visibleSlides[i - 1].classList.add("hide");
+        switchSlides(toggleSlides(-1))
+    });
+    nextArrow.addEventListener("click", () => {
+        visibleSlides[i - 1].classList.add("hide");
+        switchSlides(toggleSlides(1))
+    });
+
+    function toggleSlides(value) {
+        i = i + value;
+        if (i < 1) i = slidesTotal;
+        if (i > slidesTotal) i = 1;
+        return i;
+    }
+
+    function switchSlides(i) {
+        curSlide.textContent = i.toLocaleString(undefined, { minimumIntegerDigits: 2 });
+        visibleSlides[i - 1].classList.remove("hide");
+        visibleSlides[i - 1].classList.add("fade");
+    }
 });
