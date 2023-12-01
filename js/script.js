@@ -92,7 +92,7 @@ window.addEventListener("DOMContentLoaded", () => {
     function openModal() {
         modal.style.display = "block";
         document.body.style.overflow = "hidden";
-        clearInterval(modalTimerId);
+        //clearInterval(modalTimerId);
         //console.log("This is UPD");
     }
     modalTrigger.forEach(it => {
@@ -117,7 +117,7 @@ window.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    const modalTimerId = setTimeout(openModal, 10000);
+    // const modalTimerId = setTimeout(openModal, 10000);
 
     function showModalByScroll() {
         if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
@@ -270,31 +270,6 @@ window.addEventListener("DOMContentLoaded", () => {
     totSlides.textContent = slidesTotal.toLocaleString(undefined, { minimumIntegerDigits: 2 });
     curSlide.textContent = i.toLocaleString(undefined, { minimumIntegerDigits: 2 });
 
-    // visibleSlides.forEach(it => it.classList.add("hide"));
-    // visibleSlides[i - 1].classList.remove("hide");
-
-    // prevArrow.addEventListener("click", (e) => {
-    //     visibleSlides[i - 1].classList.add("hide");
-    //     switchSlides(toggleSlides(-1))
-    // });
-    // nextArrow.addEventListener("click", () => {
-    //     visibleSlides[i - 1].classList.add("hide");
-    //     switchSlides(toggleSlides(1))
-    // });
-
-    // function toggleSlides(value) {
-    //     i = i + value;
-    //     if (i < 1) i = slidesTotal;
-    //     if (i > slidesTotal) i = 1;
-    //     return i;
-    // }
-
-    // function switchSlides(i) {
-    //     curSlide.textContent = i.toLocaleString(undefined, { minimumIntegerDigits: 2 });
-    //     visibleSlides[i - 1].classList.remove("hide");
-    //     visibleSlides[i - 1].classList.add("fade");
-    // }
-
     // --- Slider option 2
     let offset = 0;
 
@@ -315,6 +290,8 @@ window.addEventListener("DOMContentLoaded", () => {
             offset -= parseInt(width);
         }
         toggleSlides(-1);
+        dotsArr.forEach(dot => dot.style.opacity = "0.5");
+        dotsArr[i - 1].style.opacity = 1;
         slidesWindow.style.transform = `translateX(-${offset}px)`;
     });
 
@@ -326,6 +303,8 @@ window.addEventListener("DOMContentLoaded", () => {
             offset += parseInt(width);
         }
         toggleSlides(1);
+        dotsArr.forEach(dot => dot.style.opacity = "0.5");
+        dotsArr[i - 1].style.opacity = "1";
         slidesWindow.style.transform = `translateX(-${offset}px)`;
     });
 
@@ -336,4 +315,38 @@ window.addEventListener("DOMContentLoaded", () => {
         curSlide.textContent = i.toLocaleString(undefined, { minimumIntegerDigits: 2 });
         return i;
     }
+
+    // --- Adding dots for a slider
+    const slider = document.querySelector(".offer__slider"),
+        dots = document.createElement("ol"),
+        dotsArr = [];
+
+    slider.style.position = "relative";
+    dots.classList.add("carousel-indicators");
+
+    slider.append(dots);
+
+    for (let j = 0; j < slidesTotal; j++) {
+        const dot = document.createElement("li");
+        dot.setAttribute("data-slide-to", j + 1);
+        dot.classList.add("dot");
+        if (j == 0) {
+            dot.style.opacity = 1;
+        }
+        dots.append(dot);
+        dotsArr.push(dot);
+    }
+
+    dotsArr.forEach(dot => {
+        dot.addEventListener("click", (e) => {
+            const slideTo = e.target.getAttribute("data-slide-to");
+            i = slideTo;
+            offset = parseInt(width) * (slideTo - 1);
+            slidesWindow.style.transform = `translateX(-${offset}px)`;
+            dotsArr.forEach(dot => { dot.style.opacity = "0.5" });
+            curSlide.textContent = parseInt(i).toLocaleString(undefined, { minimumIntegerDigits: 2 });
+            console.log(typeof (curSlide.textContent));
+            dotsArr[i - 1].style.opacity = 1;
+        })
+    })
 });
