@@ -3,8 +3,8 @@ window.addEventListener("DOMContentLoaded", () => {
     //Tabs
 
     const tabs = document.querySelectorAll(".tabheader__item"),
-        tabsContent = document.querySelectorAll(".tabcontent"),
-        tabsParent = document.querySelector(".tabheader__items");
+          tabsContent = document.querySelectorAll(".tabcontent"),
+          tabsParent = document.querySelector(".tabheader__items");
 
     function hideTabContent() {
         tabsContent.forEach(it => {
@@ -44,11 +44,11 @@ window.addEventListener("DOMContentLoaded", () => {
 
     function getTimeRemaining(endtime) {
         let t = Date.parse(endtime) - Date.parse(new Date());
-        t < 0 ? t = 0 : t = t;
+        t < 0 ? t = 0 : t;
         const days = Math.floor(t / (1000 * 60 * 60 * 24)),
-            hours = Math.floor((t / (1000 * 60 * 60)) % 24),
-            minutes = Math.floor((t / (1000 * 60)) % 60),
-            seconds = Math.floor((t / (1000)) % 60);
+              hours = Math.floor((t / (1000 * 60 * 60)) % 24),
+              minutes = Math.floor((t / (1000 * 60)) % 60),
+              seconds = Math.floor((t / (1000)) % 60);
 
         return {
             "total": t,
@@ -61,11 +61,11 @@ window.addEventListener("DOMContentLoaded", () => {
 
     function setClock(selector, endtime) {
         const timer = document.querySelector(selector),
-            days = timer.querySelector("#days"),
-            hours = timer.querySelector("#hours"),
-            minutes = timer.querySelector("#minutes"),
-            seconds = timer.querySelector("#seconds"),
-            timeInterval = setInterval(updateClock, 1000);
+              days = timer.querySelector("#days"),
+              hours = timer.querySelector("#hours"),
+              minutes = timer.querySelector("#minutes"),
+              seconds = timer.querySelector("#seconds"),
+              timeInterval = setInterval(updateClock, 1000);
 
         updateClock();
 
@@ -87,7 +87,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
     //Modal window
     const modalTrigger = document.querySelectorAll("[data-open]"),
-        modal = document.querySelector(".modal");
+          modal = document.querySelector(".modal");
 
     function openModal() {
         modal.style.display = "block";
@@ -146,7 +146,7 @@ window.addEventListener("DOMContentLoaded", () => {
         }
 
         render() {
-            const elm = document.createElement('div');
+            const elm = document.createElement("div");
             elm.innerHTML = `
                 <div class="menu__item">
                     <img src=${this.src} alt=${this.alt}>
@@ -173,20 +173,20 @@ window.addEventListener("DOMContentLoaded", () => {
         return await res.json();
     };
 
-    getResources('http://localhost:3000/menu')
+    getResources("http://localhost:3000/menu")
         .then(data => {
             data.forEach(({ img, altimg, title, descr, price }) => {
                 new MenuCard(img, altimg, title, descr, price, ".menu .container").render();
-            })
+            });
         }).catch(error => console.log(error));
 
     //Forms on a server
-    const forms = document.querySelectorAll('form'),
-        msg = {
-            load: "icons/three-dots_load-anim.svg",
-            success: "Спасибо, ждите ответа!",
-            fail: "Что-то пошло не так..."
-        }
+    const forms = document.querySelectorAll("form"),
+          msg = {
+              load: "icons/three-dots_load-anim.svg",
+              success: "Спасибо, ждите ответа!",
+              fail: "Что-то пошло не так..."
+          };
 
     forms.forEach(it => bindPostData(it));
 
@@ -220,7 +220,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
             const json = JSON.stringify(Object.fromEntries(formData.entries()));
 
-            postData('http://localhost:3000/requests', json)
+            postData("http://localhost:3000/requests", json)
                 .then(data => {
                     console.log(data);
                     showThanksModal(msg.success);
@@ -230,12 +230,12 @@ window.addEventListener("DOMContentLoaded", () => {
                 }).finally(() => {
                     form.reset();
                 });
-        })
+        });
     }
 
     function showThanksModal(mess) {
-        const prevModalDialog = document.querySelector('.modal__dialog');
-        prevModalDialog.classList.add('hide');
+        const prevModalDialog = document.querySelector(".modal__dialog");
+        prevModalDialog.classList.add("hide");
         openModal();
 
         const thanksModal = document.createElement("div");
@@ -252,19 +252,19 @@ window.addEventListener("DOMContentLoaded", () => {
             thanksModal.remove();
             prevModalDialog.classList.remove("hide");
             closeModal();
-        }, 4000)
+        }, 4000);
     }
 
     // Slider design and control
     const slidesTotal = document.querySelectorAll(".offer__slide").length,
-        curSlide = document.querySelector("#current"),
-        totSlides = document.querySelector("#total"),
-        visibleSlides = document.querySelectorAll(".offer__slide"),
-        slidesWrapper = document.querySelector(".offer__slider-wrapper"),
-        slidesWindow = document.querySelector(".offer__slider-inner"),
-        width = window.getComputedStyle(slidesWindow).width,
-        prevArrow = document.querySelector(".offer__slider-prev"),
-        nextArrow = document.querySelector(".offer__slider-next");
+          curSlide = document.querySelector("#current"),
+          totSlides = document.querySelector("#total"),
+          visibleSlides = document.querySelectorAll(".offer__slide"),
+          slidesWrapper = document.querySelector(".offer__slider-wrapper"),
+          slidesWindow = document.querySelector(".offer__slider-inner"),
+          width = window.getComputedStyle(slidesWindow).width,
+          prevArrow = document.querySelector(".offer__slider-prev"),
+          nextArrow = document.querySelector(".offer__slider-next");
     let i = 1;
 
     totSlides.textContent = slidesTotal.toLocaleString(undefined, { minimumIntegerDigits: 2 });
@@ -318,8 +318,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
     // --- Adding dots for a slider
     const slider = document.querySelector(".offer__slider"),
-        dots = document.createElement("ol"),
-        dotsArr = [];
+          dots = document.createElement("ol"),
+          dotsArr = [];
 
     slider.style.position = "relative";
     dots.classList.add("carousel-indicators");
@@ -343,16 +343,38 @@ window.addEventListener("DOMContentLoaded", () => {
             i = slideTo;
             offset = parseInt(width) * (slideTo - 1);
             slidesWindow.style.transform = `translateX(-${offset}px)`;
-            dotsArr.forEach(dot => { dot.style.opacity = "0.5" });
+            dotsArr.forEach(dot => { dot.style.opacity = "0.5"; });
             curSlide.textContent = parseInt(i).toLocaleString(undefined, { minimumIntegerDigits: 2 });
             console.log(typeof (curSlide.textContent));
             dotsArr[i - 1].style.opacity = 1;
-        })
+        });
     });
 
     //Calc creation
     const result = document.querySelector(".calculating__result span");
-    let gender = "female", height, weight, age, ratio = 1.375;
+    let gender = "female",
+        height, weight, age,
+        ratio = 1.375;
+
+    if (localStorage.getItem("gender")) gender = localStorage.getItem("gender");
+    if (localStorage.getItem("ratio")) ratio = localStorage.getItem("ratio");
+
+    function initLocalSetup(selector, activeClass) {
+        const elmsLoc = document.querySelectorAll(selector);
+
+        elmsLoc.forEach(elm => {
+            elm.classList.remove(activeClass);
+            if (elm.getAttribute("id") == localStorage.getItem("gender")) {
+                elm.classList.add(activeClass);
+            }
+            if (elm.getAttribute("data-ratio") == localStorage.getItem("ratio")) {
+                elm.classList.add(activeClass);
+            }
+        });
+    }
+
+    initLocalSetup("#gender div", "calculating__choose-item_active");
+    initLocalSetup(".calculating__choose_big div", "calculating__choose-item_active");
 
     function calcTotal() {
         if (!gender || !height || !weight || !age || !ratio) {
@@ -364,19 +386,21 @@ window.addEventListener("DOMContentLoaded", () => {
         } else if (gender == "male") {
             result.textContent = ((88.36 + (13.4 * weight) + (4.8 * height) - (5.7 * age)) * ratio).toFixed(1);
         }
-    };
+    }
 
     calcTotal();
 
     function getStaticInfo(parent, activeClass) {
-        const elems = document.querySelectorAll(`${parent} div`);
+        const elems = document.querySelectorAll(parent);
 
         elems.forEach(it => {
-            it.addEventListener('click', (e) => {
-                if (e.target.getAttribute('data-ratio')) {
-                    ratio = +e.target.getAttribute('data-ratio')
+            it.addEventListener("click", (e) => {
+                if (e.target.getAttribute("data-ratio")) {
+                    ratio = +e.target.getAttribute("data-ratio");
+                    localStorage.setItem("ratio", ratio);
                 } else {
-                    gender = e.target.getAttribute('id');
+                    gender = e.target.getAttribute("id");
+                    localStorage.setItem("gender", gender);
                 }
 
                 // console.log(ratio, gender);
@@ -388,34 +412,38 @@ window.addEventListener("DOMContentLoaded", () => {
                 calcTotal();
             });
         });
-
-
-
     }
 
-    getStaticInfo("#gender", "calculating__choose-item_active");
-    getStaticInfo(".calculating__choose_big", "calculating__choose-item_active");
+    getStaticInfo("#gender div", "calculating__choose-item_active");
+    getStaticInfo(".calculating__choose_big div", "calculating__choose-item_active");
 
     function getDynamicInfo(selector) {
         const inp = document.querySelector(selector);
 
         inp.addEventListener("input", () => {
-            switch (inp.getAttribute('id')) {
-                case "height":
-                    height = +inp.value;
-                    break;
-                case "weight":
-                    weight = +inp.value;
-                    break;
-                case "age":
-                    age = +inp.value;
-                    break;
+
+            if (inp.value.match(/\D/g)) {
+                inp.style.border = "1px solid red";
+            } else {
+                inp.style.border = "none";
+            }
+
+            switch (inp.getAttribute("id")) {
+            case "height":
+                height = +inp.value;
+                break;
+            case "weight":
+                weight = +inp.value;
+                break;
+            case "age":
+                age = +inp.value;
+                break;
             }
             // console.log(inp, height, weight, age);
             calcTotal();
         });
 
-    };
+    }
 
     getDynamicInfo("#height");
     getDynamicInfo("#weight");
