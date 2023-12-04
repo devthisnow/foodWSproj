@@ -487,9 +487,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_cards__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/cards */ "./js/modules/cards.js");
 /* harmony import */ var _modules_modal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/modal */ "./js/modules/modal.js");
 /* harmony import */ var _modules_forms__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/forms */ "./js/modules/forms.js");
-/* harmony import */ var _services_services__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./services/services */ "./js/services/services.js");
-/* harmony import */ var _modules_slider__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/slider */ "./js/modules/slider.js");
-
+/* harmony import */ var _modules_slider__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/slider */ "./js/modules/slider.js");
 
 
 
@@ -505,7 +503,7 @@ window.addEventListener("DOMContentLoaded", () => {
     (0,_modules_cards__WEBPACK_IMPORTED_MODULE_1__["default"])();
     (0,_modules_modal__WEBPACK_IMPORTED_MODULE_2__["default"])("[data-open]", ".modal", modalTimerId);
     (0,_modules_forms__WEBPACK_IMPORTED_MODULE_3__["default"])("form", modalTimerId);
-    (0,_modules_slider__WEBPACK_IMPORTED_MODULE_5__["default"])({
+    (0,_modules_slider__WEBPACK_IMPORTED_MODULE_4__["default"])({
         slide: ".offer__slide", 
         prevArw: ".offer__slider-prev", 
         nextArw: ".offer__slider-next", 

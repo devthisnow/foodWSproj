@@ -4,7 +4,6 @@ import cards from "./modules/cards";
 import modal from "./modules/modal";
 import forms from "./modules/forms";
 import { openModal } from "./modules/modal";
-import { postData } from "./services/services";
 import slider from "./modules/slider";
 
 window.addEventListener("DOMContentLoaded", () => {
