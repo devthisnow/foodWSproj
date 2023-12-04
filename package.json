@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/devthisnow/foodWSproj#readme",
   "devDependencies": {
-    "json-server": "^0.17.4"
+    "json-server": "^0.17.4",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4"
   }
 }

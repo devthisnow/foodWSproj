@@ -1,8 +1,161 @@
+/******/ (() => { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "./js/modules/cards.js":
+/*!*****************************!*\
+  !*** ./js/modules/cards.js ***!
+  \*****************************/
+/***/ ((module) => {
+
+function cards() {
+    //Class for item cards
+    class MenuCard {
+        constructor(src, alt, title, descr, price, parentSelector) {
+            this.src = src;
+            this.alt = alt;
+            this.title = title;
+            this.descr = descr;
+            this.price = price;
+            this.parent = document.querySelector(parentSelector);
+            this.exchange = 89;
+            this.changeToRUB();
+        }
+
+        changeToRUB() {
+            this.price = this.price * this.exchange;
+        }
+
+        render() {
+            const elm = document.createElement("div");
+            elm.innerHTML = `
+                <div class="menu__item">
+                    <img src=${this.src} alt=${this.alt}>
+                    <h3 class="menu__item-subtitle">${this.title}</h3>
+                    <div class="menu__item-descr">${this.descr}</div>
+                    <div class="menu__item-divider"></div>
+                    <div class="menu__item-price">
+                        <div class="menu__item-cost">Цена:</div>
+                        <div class="menu__item-total"><span>${this.price}</span> руб/день</div>
+                    </div>
+                </div>
+            `;
+            this.parent.append(elm);
+        }
+    }
+
+    const getResources = async (url) => {
+        const res = await fetch(url);
+
+        if (!res.ok) {
+            throw new Error(`Could not fetch ${url}, status ${res.status}.`);
+        }
+
+        return await res.json();
+    };
+
+    getResources("http://localhost:3000/menu")
+        .then(data => {
+            data.forEach(({ img, altimg, title, descr, price }) => {
+                new MenuCard(img, altimg, title, descr, price, ".menu .container").render();
+            });
+        }).catch(error => console.log(error));
+
+}
+
+module.exports = cards;
+
+/***/ }),
+
+/***/ "./js/modules/tabs.js":
+/*!****************************!*\
+  !*** ./js/modules/tabs.js ***!
+  \****************************/
+/***/ ((module) => {
+
+function tabs() {
+    //Tabs
+
+    const tabs = document.querySelectorAll(".tabheader__item"),
+          tabsContent = document.querySelectorAll(".tabcontent"),
+          tabsParent = document.querySelector(".tabheader__items");
+
+    function hideTabContent() {
+        tabsContent.forEach(it => {
+            it.style.display = "none";
+            //console.log(it, "is done");
+        });
+
+        tabs.forEach(tab => {
+            tab.classList.remove("tabheader__item_active");
+        });
+    }
+
+    function showTabContent(i = 0) {
+        tabsContent[i].style.display = "block";
+        tabs[i].classList.add("tabheader__item_active");
+    }
+
+    hideTabContent();
+    showTabContent();
+
+    tabsParent.addEventListener("click", (e) => {
+        const target = e.target;
+
+        if (target && target.classList.contains("tabheader__item")) {
+            tabs.forEach((tab, i) => {
+                if (target == tab) {
+                    hideTabContent();
+                    showTabContent(i);
+                }
+            });
+        }
+
+    });
+}
+
+module.exports = tabs;
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+(() => {
 "use strict";
+/*!**********************!*\
+  !*** ./js/script.js ***!
+  \**********************/
+
 window.addEventListener("DOMContentLoaded", () => {
 
-    const tabs = require("./modules/tabs");
-    const cards = require("./modules/cards");
+    const tabs = __webpack_require__(/*! ./modules/tabs */ "./js/modules/tabs.js");
+    const cards = __webpack_require__(/*! ./modules/cards */ "./js/modules/cards.js");
 
     tabs();
     cards();
@@ -366,3 +519,8 @@ window.addEventListener("DOMContentLoaded", () => {
     getDynamicInfo("#age");
 
 });
+})();
+
+/******/ })()
+;
+//# sourceMappingURL=bundle.js.map
