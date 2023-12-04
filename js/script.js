@@ -1,12 +1,28 @@
 "use strict";
-window.addEventListener("DOMContentLoaded", () => {
+import tabs from "./modules/tabs";
+import cards from "./modules/cards";
+import modal from "./modules/modal";
+import forms from "./modules/forms";
+import { openModal } from "./modules/modal";
+import { postData } from "./services/services";
+import slider from "./modules/slider";
 
-    const tabs = require("./modules/tabs");
-    const cards = require("./modules/cards");
+window.addEventListener("DOMContentLoaded", () => {
+    const modalTimerId = setTimeout(() => openModal(".modal", modalTimerId), 5000);
 
     tabs();
     cards();
-    
+    modal("[data-open]", ".modal", modalTimerId);
+    forms("form", modalTimerId);
+    slider({
+        slide: ".offer__slide", 
+        prevArw: ".offer__slider-prev", 
+        nextArw: ".offer__slider-next", 
+        totalCounter: "#total", 
+        currentCounter: "#current", 
+        wrapper: ".offer__slider-wrapper", 
+        field: ".offer__slider-inner"});
+
     //Timer
     const deadline = "2024-11-26";
 
@@ -52,220 +68,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     setClock(".timer", deadline);
-
-    //Modal window
-    const modalTrigger = document.querySelectorAll("[data-open]"),
-          modal = document.querySelector(".modal");
-
-    function openModal() {
-        modal.style.display = "block";
-        document.body.style.overflow = "hidden";
-        //clearInterval(modalTimerId);
-        //console.log("This is UPD");
-    }
-    modalTrigger.forEach(it => {
-        it.addEventListener("click", openModal);
-    });
-
-    function closeModal() {
-        modal.style.display = "none";
-        document.body.style.overflow = "";
-    }
-
-    modal.addEventListener("click", (e) => {
-        if (e.target == modal || e.target.getAttribute("data-close") == "") {
-            closeModal();
-        }
-    });
-
-    document.addEventListener("keydown", (e) => {
-        if (e.code == "Escape" && modal.style.display == "block") {
-            closeModal();
-            console.log(e.code);
-        }
-    });
-
-    // const modalTimerId = setTimeout(openModal, 10000);
-
-    function showModalByScroll() {
-        if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
-            openModal();
-            window.removeEventListener("scroll", showModalByScroll);
-        }
-    }
-
-    window.addEventListener("scroll", showModalByScroll);
-
-    //Forms on a server
-    const forms = document.querySelectorAll("form"),
-          msg = {
-              load: "icons/three-dots_load-anim.svg",
-              success: "Спасибо, ждите ответа!",
-              fail: "Что-то пошло не так..."
-          };
-
-    forms.forEach(it => bindPostData(it));
-
-    const postData = async (url, data) => {
-        const res = await fetch(url, {
-            method: "POST",
-            body: data,
-            headers: {
-                "Content-type": "application/json"
-            }
-        });
-
-        return await res.json();
-    };
-
-    function bindPostData(form) {
-        form.addEventListener("submit", (e) => {
-            e.preventDefault();
-            console.log("Submitted");
-
-            const statusMsg = document.createElement("img");
-            statusMsg.src = msg.load;
-            statusMsg.style.cssText = `
-                display: block;
-                margin: 20 auto;
-            `;
-            form.append(statusMsg);
-            form.insertAdjacentElement("afterend", statusMsg);
-
-            const formData = new FormData(form);
-
-            const json = JSON.stringify(Object.fromEntries(formData.entries()));
-
-            postData("http://localhost:3000/requests", json)
-                .then(data => {
-                    console.log(data);
-                    showThanksModal(msg.success);
-                    statusMsg.remove();
-                }).catch(() => {
-                    showThanksModal(msg.fail);
-                }).finally(() => {
-                    form.reset();
-                });
-        });
-    }
-
-    function showThanksModal(mess) {
-        const prevModalDialog = document.querySelector(".modal__dialog");
-        prevModalDialog.classList.add("hide");
-        openModal();
-
-        const thanksModal = document.createElement("div");
-        thanksModal.classList.add("modal__dialog");
-        thanksModal.innerHTML = `
-            <div class="modal__content">
-                <div data-close class="modal__close">&times;</div>
-                <div class="modal__title" data-close>${mess}</div>
-            </div>
-        `;
-
-        document.querySelector(".modal").append(thanksModal);
-        setTimeout(() => {
-            thanksModal.remove();
-            prevModalDialog.classList.remove("hide");
-            closeModal();
-        }, 4000);
-    }
-
-    // Slider design and control
-    const slidesTotal = document.querySelectorAll(".offer__slide").length,
-          curSlide = document.querySelector("#current"),
-          totSlides = document.querySelector("#total"),
-          visibleSlides = document.querySelectorAll(".offer__slide"),
-          slidesWrapper = document.querySelector(".offer__slider-wrapper"),
-          slidesWindow = document.querySelector(".offer__slider-inner"),
-          width = window.getComputedStyle(slidesWindow).width,
-          prevArrow = document.querySelector(".offer__slider-prev"),
-          nextArrow = document.querySelector(".offer__slider-next");
-    let i = 1;
-
-    totSlides.textContent = slidesTotal.toLocaleString(undefined, { minimumIntegerDigits: 2 });
-    curSlide.textContent = i.toLocaleString(undefined, { minimumIntegerDigits: 2 });
-
-    // --- Slider option 2
-    let offset = 0;
-
-    slidesWindow.style.width = 100 * slidesTotal + "%";
-    slidesWindow.style.display = "flex";
-    slidesWindow.style.transition = "0.25s all";
-    slidesWrapper.style.overflow = "hidden";
-
-    visibleSlides.forEach(slide => {
-        slide.style.width = width;
-    });
-
-    prevArrow.addEventListener("click", () => {
-        console.log("This");
-        if (offset == 0) {
-            offset = parseInt(width) * (slidesTotal - 1);
-        } else {
-            offset -= parseInt(width);
-        }
-        toggleSlides(-1);
-        dotsArr.forEach(dot => dot.style.opacity = "0.5");
-        dotsArr[i - 1].style.opacity = 1;
-        slidesWindow.style.transform = `translateX(-${offset}px)`;
-    });
-
-    nextArrow.addEventListener("click", () => {
-        console.log("That");
-        if (offset == parseInt(width) * (slidesTotal - 1)) {
-            offset = 0;
-        } else {
-            offset += parseInt(width);
-        }
-        toggleSlides(1);
-        dotsArr.forEach(dot => dot.style.opacity = "0.5");
-        dotsArr[i - 1].style.opacity = "1";
-        slidesWindow.style.transform = `translateX(-${offset}px)`;
-    });
-
-    function toggleSlides(value) {
-        i = i + value;
-        if (i < 1) i = slidesTotal;
-        if (i > slidesTotal) i = 1;
-        curSlide.textContent = i.toLocaleString(undefined, { minimumIntegerDigits: 2 });
-        return i;
-    }
-
-    // --- Adding dots for a slider
-    const slider = document.querySelector(".offer__slider"),
-          dots = document.createElement("ol"),
-          dotsArr = [];
-
-    slider.style.position = "relative";
-    dots.classList.add("carousel-indicators");
-
-    slider.append(dots);
-
-    for (let j = 0; j < slidesTotal; j++) {
-        const dot = document.createElement("li");
-        dot.setAttribute("data-slide-to", j + 1);
-        dot.classList.add("dot");
-        if (j == 0) {
-            dot.style.opacity = 1;
-        }
-        dots.append(dot);
-        dotsArr.push(dot);
-    }
-
-    dotsArr.forEach(dot => {
-        dot.addEventListener("click", (e) => {
-            const slideTo = e.target.getAttribute("data-slide-to");
-            i = slideTo;
-            offset = parseInt(width) * (slideTo - 1);
-            slidesWindow.style.transform = `translateX(-${offset}px)`;
-            dotsArr.forEach(dot => { dot.style.opacity = "0.5"; });
-            curSlide.textContent = parseInt(i).toLocaleString(undefined, { minimumIntegerDigits: 2 });
-            console.log(typeof (curSlide.textContent));
-            dotsArr[i - 1].style.opacity = 1;
-        });
-    });
-
+    
     //Calc creation
     const result = document.querySelector(".calculating__result span");
     let gender = "female",
